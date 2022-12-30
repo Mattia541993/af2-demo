@@ -1,11 +1,8 @@
 <template>
   <div class="p-2 border border-gray-500 mt-4">
     <label class="block mb-2 font-bold"> Coba Chart </label>
+    <FunctionPlot />
 
-    <FunctionChart
-      :chartData="chartData"
-      :options="{ responsive: true, mantainAspectRatio: false }"
-    />
     <button @click="changeChartData">Change data</button>
   </div>
 </template>
