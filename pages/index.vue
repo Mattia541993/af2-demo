@@ -3,7 +3,7 @@
     <label class="block mb-2 font-bold"> Coba Chart </label>
     <FunctionPlot />
 
-    <button @click="changeChartData">Change data</button>
+    <!-- <button @click="changeChartData">Change data</button> -->
   </div>
 </template>
 
