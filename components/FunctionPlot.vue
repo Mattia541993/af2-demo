@@ -1,15 +1,44 @@
 <template>
   <div>
-    <vue-web-speech-synth v-model="shouldRead" :text="textToRead" />
-    <Keypress key-event="keyup" :key-code="13" @success="logKey" />
+    <vue-web-speech-synth
+      v-model="shouldRead"
+      :text="textToRead"
+      :voice="ttsVoice"
+      @list-voices="listVoices"
+    />
+    <div v-if="isFunctionInteractionModeEnabled">
+      <Keypress key-event="keyup" :key-code="13" @success="logKey" />
+      <Keypress key-event="keyup" :key-code="65" @success="logKey" />
+      <Keypress key-event="keyup" :key-code="83" @success="logKey" />
+      <!-- TODO: Aggiungere shortcut per attivare disattivare modalità interazione con funzione -->
+    </div>
+
+    <select v-model="synthVoice">
+      <option
+        v-for="(voice, index) in voiceList"
+        :key="index"
+        :value="voice.name"
+      >
+        {{ voice.name }} [{{ voice.lang }}]
+        <!-- {{ voice }} -->
+      </option>
+    </select>
+    <input
+      type="checkbox"
+      id="enableFnCheckbox"
+      v-model="isFunctionInteractionModeEnabled"
+    />
+    <label for="enableFnCheckbox"
+      >Interazione tramite tastiera
+      {{
+        isFunctionInteractionModeEnabled ? "abilitata" : "disabilitata"
+      }}</label
+    >
     <p>{{ fun }}</p>
-    <div id="root"></div>
+    <div id="root" role="application" tabindex="0"></div>
     <button v-tooltip="'Tooltip sul bottone'" @click="changeChartData">
       Change data
     </button>
-    <v-popover>
-      <button>Click me</button>
-    </v-popover>
   </div>
 </template>
 
@@ -22,11 +51,19 @@ export default {
       fun: "x",
       shouldRead: false,
       textToRead: "",
+      voiceList: [],
+      synthVoice: null,
+      isFunctionInteractionModeEnabled: false,
     };
   },
 
   components: {
     Keypress: () => import("vue-keypress"),
+  },
+  computed: {
+    ttsVoice() {
+      return this.voiceList.find((elem) => elem.name == this.synthVoice);
+    },
   },
   mounted() {
     console.log("mounted");
@@ -43,8 +80,14 @@ export default {
       this.fun = "x^2";
       this.updateFunctionChart();
     },
+    listVoices(list) {
+      this.voiceList = list;
+    },
     logKey(event) {
-      console.log(event);
+      // debugger;
+      console.log(`premuto tasto ${event.event.key}`);
+      this.textToRead = event.message;
+      this.shouldRead = true;
     },
     updateFunctionChart() {
       console.log(`window ${window}`);

@@ -1,6 +1,6 @@
 <template>
   <div class="p-2 border border-gray-500 mt-4">
-    <label class="block mb-2 font-bold"> Coba Chart </label>
+    <label class="block mb-2 font-bold"> Prova grafico </label>
     <FunctionPlot />
 
     <!-- <button @click="changeChartData">Change data</button> -->
