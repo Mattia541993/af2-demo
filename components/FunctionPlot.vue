@@ -85,8 +85,9 @@ export default {
     },
     logKey(event) {
       // debugger;
-      console.log(`premuto tasto ${event.event.key}`);
-      this.textToRead = event.message;
+
+      console.log(event);
+      this.textToRead = `premuto ${event.event.key}`;
       this.shouldRead = true;
     },
     updateFunctionChart() {
