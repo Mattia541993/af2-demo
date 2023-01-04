@@ -35,7 +35,12 @@
       }}</label
     >
     <p>{{ fun }}</p>
-    <div id="root" role="application" tabindex="0"></div>
+    <div
+      id="root"
+      role="application"
+      tabindex="0"
+      aria-label="area del grafico"
+    ></div>
     <button v-tooltip="'Tooltip sul bottone'" @click="changeChartData">
       Change data
     </button>
