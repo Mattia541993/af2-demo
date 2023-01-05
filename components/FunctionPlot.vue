@@ -44,6 +44,7 @@
     <button v-tooltip="'Tooltip sul bottone'" @click="changeChartData">
       Change data
     </button>
+    <b-button variant="danger">Prova bottone con bootstrap vue</b-button>
   </div>
 </template>
 

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@codekraft-studio/vue-speech": "^0.1.0",
+    "bootstrap-vue": "^2.23.1",
     "chart.js": "2.9.4",
     "core-js": "^3.25.3",
     "function-plot": "^1.23.2",
