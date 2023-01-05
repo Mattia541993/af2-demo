@@ -50,6 +50,7 @@
 
 <script>
 import functionPlot from "function-plot";
+import * as Tone from "tone";
 
 export default {
   data() {
@@ -60,6 +61,7 @@ export default {
       voiceList: [],
       synthVoice: null,
       isFunctionInteractionModeEnabled: false,
+      instrument: new Tone.Synth().toDestination(),
     };
   },
 
@@ -85,6 +87,7 @@ export default {
     changeChartData() {
       this.fun = "x^2";
       this.updateFunctionChart();
+      this.instrument.triggerAttackRelease("C4", "4n");
     },
     listVoices(list) {
       this.voiceList = list;
