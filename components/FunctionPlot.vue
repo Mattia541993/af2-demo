@@ -10,6 +10,8 @@
       <Keypress key-event="keyup" :key-code="13" @success="logKey" />
       <Keypress key-event="keyup" :key-code="65" @success="logKey" />
       <Keypress key-event="keyup" :key-code="83" @success="logKey" />
+      <Keypress key-event="keydown" :key-code="39" @success="handleKeyDown" />
+      <Keypress key-event="keyup" :key-code="39" @success="handleKeyUp" />
       <!-- TODO: Aggiungere shortcut per attivare disattivare modalità interazione con funzione -->
     </div>
 
@@ -62,6 +64,9 @@ export default {
       synthVoice: null,
       isFunctionInteractionModeEnabled: false,
       instrument: new Tone.Synth().toDestination(),
+      keyLongPressed: false,
+      keyTimer: null,
+      currentFnXValue: 0,
     };
   },
 
@@ -98,6 +103,27 @@ export default {
       console.log(event);
       this.textToRead = `premuto ${event.event.key}`;
       this.shouldRead = true;
+    },
+
+    handleKeyDown(event) {
+      console.log(`${event.event.key} DOWN`);
+      if (this.keyTimer == null) {
+        var repeat = function () {
+          // debugger;
+          this.currentFnXValue += 10;
+          this.keyTimer = setTimeout(repeat, 200);
+          console.log(`current fn x value: ${this.currentFnXValue}`);
+        }.bind(this);
+        repeat();
+      }
+    },
+    handleKeyUp(event) {
+      console.log(`${event.event.key} UP`);
+      if (this.keyTimer != null) {
+        clearTimeout(this.keyTimer);
+        this.keyTimer = null;
+        this.currentFnXValue = 0;
+      }
     },
     updateFunctionChart() {
       console.log(`window ${window}`);
