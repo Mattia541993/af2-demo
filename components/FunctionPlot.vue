@@ -15,38 +15,48 @@
       <!-- TODO: Aggiungere shortcut per attivare disattivare modalità interazione con funzione -->
     </div>
 
-    <select v-model="synthVoice">
-      <option
-        v-for="(voice, index) in voiceList"
-        :key="index"
-        :value="voice.name"
+    <div ref="header" style="background-color: red">
+      <select v-model="synthVoice">
+        <option
+          v-for="(voice, index) in voiceList"
+          :key="index"
+          :value="voice.name"
+        >
+          {{ voice.name }} [{{ voice.lang }}]
+          <!-- {{ voice }} -->
+        </option>
+      </select>
+      <input
+        type="checkbox"
+        id="enableFnCheckbox"
+        v-model="isFunctionInteractionModeEnabled"
+      />
+      <label for="enableFnCheckbox"
+        >Interazione tramite tastiera
+        {{
+          isFunctionInteractionModeEnabled ? "abilitata" : "disabilitata"
+        }}</label
       >
-        {{ voice.name }} [{{ voice.lang }}]
-        <!-- {{ voice }} -->
-      </option>
-    </select>
-    <input
-      type="checkbox"
-      id="enableFnCheckbox"
-      v-model="isFunctionInteractionModeEnabled"
-    />
-    <label for="enableFnCheckbox"
-      >Interazione tramite tastiera
-      {{
-        isFunctionInteractionModeEnabled ? "abilitata" : "disabilitata"
-      }}</label
-    >
-    <p>{{ fun }}</p>
+      <p>{{ fun }}</p>
+    </div>
+
     <div
-      id="root"
-      role="application"
-      tabindex="0"
-      aria-label="area del grafico"
-    ></div>
-    <button v-tooltip="'Tooltip sul bottone'" @click="changeChartData">
-      Change data
-    </button>
-    <b-button variant="danger">Prova bottone con bootstrap vue</b-button>
+      class="w-100 h-100"
+      ref="fnContainer"
+      style="background-color: aliceblue"
+    >
+      <resize-observer @notify="handleResize" />
+
+      <div role="application" tabindex="0" aria-label="area del grafico">
+        <div id="root" aria-hidden="true"></div>
+      </div>
+    </div>
+    <footer ref="footer" class="w-100" style="background-color: blue">
+      <button v-tooltip="'Tooltip sul bottone'" @click="changeChartData">
+        Change data
+      </button>
+      <b-button variant="danger">Prova bottone con bootstrap vue</b-button>
+    </footer>
   </div>
 </template>
 
@@ -67,6 +77,8 @@ export default {
       keyLongPressed: false,
       keyTimer: null,
       currentFnXValue: 0,
+      fnContainerWidth: 0,
+      fnContainerHeight: 0,
     };
   },
 
@@ -85,6 +97,9 @@ export default {
     //     `premuto tasto ${e.which}, ${String.fromCharCode(e.keyCode)}`
     //   );
     // });
+    this.fnContainerWidth = this.$refs.fnContainer.offsetWidth;
+    this.fnContainerHeight = this.$refs.fnContainer.offsetHeight;
+
     this.updateFunctionChart();
   },
 
@@ -104,6 +119,13 @@ export default {
       this.textToRead = `premuto ${event.event.key}`;
       this.shouldRead = true;
     },
+    handleResize({ width, height }) {
+      console.log(`resized ${width}, ${height}`);
+      this.fnContainerWidth = this.$refs.fnContainer.offsetWidth;
+      this.fnContainerHeight = this.$refs.fnContainer.offsetHeight;
+
+      this.updateFunctionChart();
+    },
 
     handleKeyDown(event) {
       console.log(`${event.event.key} DOWN`);
@@ -113,7 +135,7 @@ export default {
           this.currentFnXValue += 10;
           this.keyTimer = setTimeout(repeat, 200);
           console.log(`current fn x value: ${this.currentFnXValue}`);
-        }.bind(this);
+        }.bind(this); //è necessario bindare il this alla funzione, altrimenti verrebbe perso il this dell'istanza di Vue all'interno della funzione: https://lusaxweb.github.io/vuesax-blog/tips/scope_this.html#create-var
         repeat();
       }
     },
@@ -126,11 +148,11 @@ export default {
       }
     },
     updateFunctionChart() {
-      console.log(`window ${window}`);
+      // console.log(`window ${window}`);
       const fnPlotInstance = functionPlot({
         target: "#root",
-        width: 500,
-        height: 800,
+        width: this.fnContainerWidth,
+        height: this.fnContainerHeight,
         grid: true,
         data: [
           {

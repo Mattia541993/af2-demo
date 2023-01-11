@@ -2,6 +2,9 @@ export default {
   // Target: https://go.nuxtjs.dev/config-target
   target: "static",
   ssr: false,
+  server: {
+    port: 3002,
+  },
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
@@ -27,6 +30,7 @@ export default {
     /*{ src: "~/plugins/chart.js", ssr: false }*/
     { src: "~/plugins/vue-speech.js", mode: "client" },
     { src: "~/plugins/vue-tooltip.js", mode: "client" },
+    { src: "~/plugins/vue-resize.js", mode: "client" },
     // { src: "~/plugins/vue-keypress.js" },
   ],
 
