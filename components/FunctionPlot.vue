@@ -15,7 +15,7 @@
       <!-- TODO: Aggiungere shortcut per attivare disattivare modalità interazione con funzione -->
     </div>
 
-    <div ref="header" style="background-color: red">
+    <header ref="header" style="background-color: red">
       <select v-model="synthVoice">
         <option
           v-for="(voice, index) in voiceList"
@@ -38,31 +38,37 @@
         }}</label
       >
       <p>{{ fun }}</p>
-    </div>
+    </header>
 
     <div
-      class="w-100 h-100"
+      class="d-flex flex-column w-100 h-100"
+      id="functionContainer"
       ref="fnContainer"
-      style="background-color: aliceblue"
     >
-      <resize-observer @notify="handleResize" />
+      <div
+        class="w-100 h-100"
+        style="background-color: green; position: relative"
+      >
+        <resize-observer @notify="handleResize" :emitOnMount="true" />
 
-      <div role="application" tabindex="0" aria-label="area del grafico">
-        <div id="root" aria-hidden="true"></div>
+        <div role="application" tabindex="0" aria-label="area del grafico">
+          <div id="root" aria-hidden="true"></div>
+        </div>
       </div>
+      <footer ref="footer" class="w-100" style="background-color: blue">
+        <button v-tooltip="'Tooltip sul bottone'" @click="changeChartData">
+          Change data
+        </button>
+        <b-button variant="danger">Prova bottone con bootstrap vue</b-button>
+      </footer>
     </div>
-    <footer ref="footer" class="w-100" style="background-color: blue">
-      <button v-tooltip="'Tooltip sul bottone'" @click="changeChartData">
-        Change data
-      </button>
-      <b-button variant="danger">Prova bottone con bootstrap vue</b-button>
-    </footer>
   </div>
 </template>
 
 <script>
 import functionPlot from "function-plot";
 import * as Tone from "tone";
+import $ from "jquery";
 
 export default {
   data() {
@@ -81,6 +87,20 @@ export default {
       fnContainerHeight: 0,
     };
   },
+  watch: {
+    fnContainerWidth: {
+      handler(newVal) {
+        this.updateFunctionChart();
+      },
+      immediate: true,
+    },
+    fnContainerHeight: {
+      handler(newVal) {
+        this.updateFunctionChart();
+      },
+      immediate: true,
+    },
+  },
 
   components: {
     Keypress: () => import("vue-keypress"),
@@ -97,10 +117,25 @@ export default {
     //     `premuto tasto ${e.which}, ${String.fromCharCode(e.keyCode)}`
     //   );
     // });
-    this.fnContainerWidth = this.$refs.fnContainer.offsetWidth;
-    this.fnContainerHeight = this.$refs.fnContainer.offsetHeight;
+    // this.fnContainerWidth = this.$refs.fnContainer.offsetWidth;
+    // this.fnContainerHeight = this.$refs.fnContainer.offsetHeight;
+    // this.$nextTick(() => {
+    //   console.log(`Sul mounted nextTick ${$("#functionContainer").height()}`);
+    // });
+    // setTimeout(() => {
+    //   console.log(`Sul mounted timeout ${$("#functionContainer").height()}`);
+    // }, 100);
 
-    this.updateFunctionChart();
+    // this.fnContainerWidth =
+    //   this.$refs.fnContainer.getBoundingClientRect().width;
+    // this.fnContainerHeight =
+    //   this.$refs.fnContainer.getBoundingClientRect().height;
+    // setTimeout(() => {
+    //   this.resizeWindow();
+    //   this.resizeWindowAmt(-1);
+    // }, 1000);
+
+    // this.updateFunctionChart();
   },
 
   methods: {
@@ -108,6 +143,12 @@ export default {
       this.fun = "x^2";
       this.updateFunctionChart();
       this.instrument.triggerAttackRelease("C4", "4n");
+    },
+    resizeWindowAmt(amt) {
+      window.resizeBy(amt, 0);
+    },
+    resizeWindow() {
+      window.dispatchEvent(new Event("resize"));
     },
     listVoices(list) {
       this.voiceList = list;
@@ -120,11 +161,15 @@ export default {
       this.shouldRead = true;
     },
     handleResize({ width, height }) {
-      console.log(`resized ${width}, ${height}`);
-      this.fnContainerWidth = this.$refs.fnContainer.offsetWidth;
-      this.fnContainerHeight = this.$refs.fnContainer.offsetHeight;
+      // setTimeout(() => {
+      //   console.log(`Sul resize timeout ${$("#functionContainer").height()}`);
+      // }, 100);
+      console.log(`resize ${width} ${height}`);
 
-      this.updateFunctionChart();
+      this.fnContainerWidth = width;
+      this.fnContainerHeight = height;
+
+      // this.updateFunctionChart();
     },
 
     handleKeyDown(event) {
@@ -148,11 +193,12 @@ export default {
       }
     },
     updateFunctionChart() {
-      // console.log(`window ${window}`);
+      // debugger;
+
       const fnPlotInstance = functionPlot({
         target: "#root",
         width: this.fnContainerWidth,
-        height: this.fnContainerHeight,
+        height: this.fnContainerHeight * 0.99,
         grid: true,
         data: [
           {
