@@ -15,7 +15,7 @@
       <!-- TODO: Aggiungere shortcut per attivare disattivare modalità interazione con funzione -->
     </div>
 
-    <header ref="header" style="background-color: red">
+    <header ref="header">
       <select v-model="synthVoice">
         <option
           v-for="(voice, index) in voiceList"
@@ -37,7 +37,17 @@
           isFunctionInteractionModeEnabled ? "abilitata" : "disabilitata"
         }}</label
       >
+      <mathlive-mathfield
+        ref="mathfield"
+        id="mf"
+        :options="{
+          virtualKeyboardMode: 'onfocus',
+          keypressSound: 'none',
+        }"
+      >
+      </mathlive-mathfield>
       <p>{{ fun }}</p>
+      <p>Formula: {{ inputFunctionLatex }}</p>
     </header>
 
     <div
@@ -45,10 +55,7 @@
       id="functionContainer"
       ref="fnContainer"
     >
-      <div
-        class="w-100 h-100"
-        style="background-color: green; position: relative"
-      >
+      <div class="w-100 h-100" style="position: relative">
         <resize-observer @notify="handleResize" :emitOnMount="true" />
 
         <div role="application" tabindex="0" aria-label="area del grafico">
@@ -85,6 +92,7 @@ export default {
       currentFnXValue: 0,
       fnContainerWidth: 0,
       fnContainerHeight: 0,
+      inputFunctionLatex: "",
     };
   },
   watch: {
@@ -112,30 +120,22 @@ export default {
   },
   mounted() {
     console.log("mounted");
-    // window.addEventListener("keydown", function (e) {
-    //   console.log(
-    //     `premuto tasto ${e.which}, ${String.fromCharCode(e.keyCode)}`
-    //   );
-    // });
-    // this.fnContainerWidth = this.$refs.fnContainer.offsetWidth;
-    // this.fnContainerHeight = this.$refs.fnContainer.offsetHeight;
-    // this.$nextTick(() => {
-    //   console.log(`Sul mounted nextTick ${$("#functionContainer").height()}`);
-    // });
-    // setTimeout(() => {
-    //   console.log(`Sul mounted timeout ${$("#functionContainer").height()}`);
-    // }, 100);
-
-    // this.fnContainerWidth =
-    //   this.$refs.fnContainer.getBoundingClientRect().width;
-    // this.fnContainerHeight =
-    //   this.$refs.fnContainer.getBoundingClientRect().height;
-    // setTimeout(() => {
-    //   this.resizeWindow();
-    //   this.resizeWindowAmt(-1);
-    // }, 1000);
-
-    // this.updateFunctionChart();
+    const mathField = document.getElementById("mf");
+    mathField.addEventListener("change", (evt) => {
+      //Return o enter premuto
+      this.inputFunctionLatex = evt.target.value;
+      console.log(`focus-out. Latex: ${evt.target.value}`);
+    });
+    mathField.addEventListener("focus-out", (evt) => {
+      //Quando col tab lascio il campo di input
+      // debugger;
+      this.inputFunctionLatex = evt.target.value;
+      console.log(`focus-out. Latex: ${evt.target.value}`);
+    });
+    // debugger;
+    // this.$refs.mathfield.addEventListener("input", (ev) =>
+    //   console.log("input")
+    // );
   },
 
   methods: {
@@ -149,6 +149,16 @@ export default {
     },
     resizeWindow() {
       window.dispatchEvent(new Event("resize"));
+    },
+    logKeystroke(key, _ev) {
+      console.log("keystroke");
+      return true;
+    },
+    ping: () => {
+      console.log("ping");
+    },
+    onNewFnInputValue(newVal) {
+      console.log(`new fun val ${newVal}`);
     },
     listVoices(list) {
       this.voiceList = list;
@@ -164,7 +174,7 @@ export default {
       // setTimeout(() => {
       //   console.log(`Sul resize timeout ${$("#functionContainer").height()}`);
       // }, 100);
-      console.log(`resize ${width} ${height}`);
+      // console.log(`resize ${width} ${height}`);
 
       this.fnContainerWidth = width;
       this.fnContainerHeight = height;

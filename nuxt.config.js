@@ -22,7 +22,7 @@ export default {
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: [],
+  css: ["mathlive/dist/mathlive-fonts.css"],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
@@ -31,6 +31,7 @@ export default {
     { src: "~/plugins/vue-speech.js", mode: "client" },
     { src: "~/plugins/vue-tooltip.js", mode: "client" },
     { src: "~/plugins/vue-resize.js", mode: "client" },
+    { src: "~/plugins/mathlive-input.js", mode: "client" },
     // { src: "~/plugins/vue-keypress.js" },
   ],
 
@@ -53,9 +54,10 @@ export default {
   build: {
     extend(config, ctx) {
       if (ctx.isDev) {
-        config.devtool = ctx.isClient ? "source-map" : "inline-source-map";
+        config.devtool = ctx.isClient ? "source-map" : "inline-source-map"; //per poter debuggare mettendo breakpoints negli hook direttamente del componente vue
       }
+      config.resolve.alias["vue"] = "vue/dist/vue.common"; //serve per mathlive perchè mi da questo errore: https://github.com/nuxt/nuxt.js/issues/1142 . Nella doc di vue-mathlive è specificato che ci potrebbe essere (vedi "Caution" https://github.com/arnog/vue-mathlive )
     },
-    transpile: ["function-plot", "vue-tooltip"],
+    transpile: ["function-plot", "vue-tooltip", "mathlive"],
   },
 };
