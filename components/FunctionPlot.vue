@@ -41,7 +41,7 @@
         ref="mathfield"
         id="mf"
         :options="{
-          virtualKeyboardMode: 'onfocus',
+          virtualKeyboardMode: 'manual',
           keypressSound: 'none',
         }"
       >
