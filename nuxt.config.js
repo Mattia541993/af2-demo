@@ -32,6 +32,7 @@ export default {
     { src: "~/plugins/vue-tooltip.js", mode: "client" },
     { src: "~/plugins/vue-resize.js", mode: "client" },
     { src: "~/plugins/mathlive-input.js", mode: "client" },
+    { src: "~/plugins/vue-a11y-announcer.js", mode: "client" },
     // { src: "~/plugins/vue-keypress.js" },
   ],
 

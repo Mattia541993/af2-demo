@@ -1,5 +1,6 @@
 <template>
   <div>
+    <VueAnnouncer />
     <vue-web-speech-synth
       v-model="shouldRead"
       :text="textToRead"
@@ -37,6 +38,11 @@
           isFunctionInteractionModeEnabled ? "abilitata" : "disabilitata"
         }}</label
       >
+      <Keypress
+        key-event="keyup"
+        :multiple-keys="multiple"
+        @success="readMathExpression"
+      />
       <mathlive-mathfield
         ref="mathfield"
         id="mf"
@@ -48,6 +54,7 @@
       </mathlive-mathfield>
       <p>{{ fun }}</p>
       <p>Formula: {{ inputFunctionLatex }}</p>
+      <!-- <div id="formula-desmos" style="width: 600px; height: 400px"></div> -->
     </header>
 
     <div
@@ -74,8 +81,11 @@
 
 <script>
 import functionPlot from "function-plot";
+// import Desmos from "desmos";
 import * as Tone from "tone";
 import $ from "jquery";
+import _ from "lodash";
+import Diff from "text-diff";
 
 export default {
   data() {
@@ -93,6 +103,16 @@ export default {
       fnContainerWidth: 0,
       fnContainerHeight: 0,
       inputFunctionLatex: "",
+      lastInsertedLatexFunction: "",
+      lastA11ySpokenFormulaText: "",
+      lastA11yCompleteSpokenFormulaText: "",
+      multiple: [
+        {
+          keyCode: 81,
+          modifiers: ["ctrlKey", "shiftKey"],
+          preventDefault: true,
+        },
+      ],
     };
   },
   watch: {
@@ -120,17 +140,72 @@ export default {
   },
   mounted() {
     console.log("mounted");
+    // const desmosContainer = document.getElementById("formula-desmos");
+    // var calculator = Desmos.GraphingCalculator(desmosContainer, {
+    //   zoomButtons: false,
+    //   graphpaper: false,
+    //   expressionsTopbar: false,
+    //   settingsMenu: false,
+    //   language: "it",
+    // });
+
     const mathField = document.getElementById("mf");
     mathField.addEventListener("change", (evt) => {
       //Return o enter premuto
       this.inputFunctionLatex = evt.target.value;
       console.log(`focus-out. Latex: ${evt.target.value}`);
     });
+    mathField.addEventListener("move-out", function (evt) {
+      console.log("moving out"); //quando sono ai bordi dell'espressione
+    });
+
+    mathField.addEventListener("selection-change", function (evt) {
+      //quando cambio posizione al cursore
+      console.log(`caret position`);
+
+      console.log(evt);
+    });
+
+    mathField.addEventListener("input", (evt) => {
+      // console.log(evt.target.value);
+      console.log(evt); // qua ottengo il carattere che ho inserito
+      // const locale = evt.target.getOptions("locale");
+      if (evt.inputType == "insertText") {
+        this.lastInsertedLatexFunction = evt.target.value;
+        const insertedChar = evt.data;
+        console.log(insertedChar);
+        this.$announcer.assertive(`inserito ${insertedChar}`);
+      } else if (evt.inputType == "deleteContentBackward") {
+        const latexAfterDeletion = evt.target.value;
+        const diff = new Diff();
+        const textDiff = diff.main(
+          this.lastInsertedLatexFunction,
+          latexAfterDeletion
+        );
+        const deletedText = textDiff.reduce(
+          (acc, [key, value]) => ({ ...acc, [key]: value }),
+          {}
+        )["-1"];
+        console.log(`cancellato ${deletedText}`);
+        this.$announcer.assertive(`cancellato ${deletedText}`);
+      }
+
+      // console.log("Locale:", locale);
+      console.log(`direi ${evt.target.getValue("spoken-text")}`);
+
+      // evt.target.executeCommand("speak");
+    });
+
     mathField.addEventListener("focus-out", (evt) => {
       //Quando col tab lascio il campo di input
       // debugger;
       this.inputFunctionLatex = evt.target.value;
       console.log(`focus-out. Latex: ${evt.target.value}`);
+      this.$announcer.assertive("");
+    });
+    mathField.addEventListener("focus", (evt) => {
+      console.log("focused");
+      this.$announcer.assertive(evt.target.getValue("spoken-text"));
     });
     // debugger;
     // this.$refs.mathfield.addEventListener("input", (ev) =>
@@ -169,6 +244,22 @@ export default {
       console.log(event);
       this.textToRead = `premuto ${event.event.key}`;
       this.shouldRead = true;
+    },
+    readMathExpression(event) {
+      const formula = this.$refs.mathfield.getValue("spoken-text");
+      const repeatPrefix = "Ripeto: ";
+      var toRead = this.lastA11ySpokenFormulaText;
+      if (formula === this.lastA11ySpokenFormulaText) {
+        toRead = `${
+          this.lastA11yCompleteSpokenFormulaText.startsWith(repeatPrefix)
+            ? ""
+            : repeatPrefix
+        }${formula}`;
+      }
+      this.lastA11yCompleteSpokenFormulaText = toRead;
+      this.lastA11ySpokenFormulaText = formula;
+      this.$announcer.assertive(`${toRead}`);
+      // this.$announcer.polite("");
     },
     handleResize({ width, height }) {
       // setTimeout(() => {

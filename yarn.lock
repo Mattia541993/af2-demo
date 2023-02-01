@@ -1813,6 +1813,11 @@
   dependencies:
     "@types/node" "*"
 
+"@vue-a11y/announcer@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@vue-a11y/announcer/-/announcer-2.1.0.tgz#ed725e90b91870c76285840e0aaa637cfafbf27f"
+  integrity sha512-7V1osiJQxZPBA+2duF2nZugwgbIba/yvKLsHWvGIBJGY0VZhR4vYyFH3VFyFH2Yi46tHEVBN+X+a0uQaJMhCsQ==
+
 "@vue/babel-helper-vue-jsx-merge-props@^1.4.0":
   version "1.4.0"
   resolved "https://registry.npmjs.org/@vue/babel-helper-vue-jsx-merge-props/-/babel-helper-vue-jsx-merge-props-1.4.0.tgz"
@@ -4290,6 +4295,11 @@ des.js@^1.0.0:
     inherits "^2.0.1"
     minimalistic-assert "^1.0.0"
 
+desmos@^1.5.4:
+  version "1.5.4"
+  resolved "https://registry.yarnpkg.com/desmos/-/desmos-1.5.4.tgz#6b3c15e940fffc6de79c3a6e5c26eca35e1f8775"
+  integrity sha512-8BxQqU/7n6J9cxAiSDm6sNCqSu29z5VaYKcfOx0N4MY2oT75NE5oo6MRgtulVHibMBxCuH+6fpXr0WP4IoL0Dg==
+
 destr@^1.1.0, destr@^1.1.1:
   version "1.2.2"
   resolved "https://registry.npmjs.org/destr/-/destr-1.2.2.tgz"
@@ -6507,7 +6517,7 @@ math-codegen@^0.4.1:
     extend "^3.0.2"
     mr-parser "^0.2.1"
 
-mathlive@^0.86.0, mathlive@latest:
+mathlive@^0.86.0:
   version "0.86.0"
   resolved "https://registry.yarnpkg.com/mathlive/-/mathlive-0.86.0.tgz#cd72beaf5d1e164b1e6ebf22c97bfca0f925d8a0"
   integrity sha512-gChz82gnK0mVbTkmuomwAFSPZTERicBw7hi60J1XqYhbYL+qvUzRw6gBEAIxMOs7pL+6EXPJI7J+QWni/i05lQ==
@@ -9778,6 +9788,11 @@ terser@^5.10.0, terser@^5.14.1, terser@^5.3.4:
     commander "^2.20.0"
     source-map-support "~0.5.20"
 
+text-diff@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/text-diff/-/text-diff-1.0.1.tgz#6c105905435e337857375c9d2f6ca63e453ff565"
+  integrity sha512-jAnlP3ggZk7FeLX1awaMR8Y2sMyil9P9FXvNjaIJIQBAom1zvpKGGH31htOVrUFp0vlyygmJJpNrbJ4rfjsxrA==
+
 text-table@^0.2.0:
   version "0.2.0"
   resolved "https://registry.npmjs.org/text-table/-/text-table-0.2.0.tgz"
@@ -10275,12 +10290,6 @@ vue-loader@^17.0.0:
     chalk "^4.1.0"
     hash-sum "^2.0.0"
     loader-utils "^2.0.0"
-
-"vue-mathlive@https://github.com/arnog/vue-mathlive.git":
-  version "1.0.0"
-  resolved "https://github.com/arnog/vue-mathlive.git#a5e32aa9ab8b8689c9e4eed9f28db40a88292116"
-  dependencies:
-    mathlive latest
 
 vue-meta@^2.4.0:
   version "2.4.0"
