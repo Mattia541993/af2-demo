@@ -46,6 +46,7 @@
       <mathlive-mathfield
         ref="mathfield"
         id="mf"
+        role="presentation"
         :options="{
           virtualKeyboardMode: 'manual',
           keypressSound: 'none',
@@ -104,8 +105,8 @@ export default {
       fnContainerHeight: 0,
       inputFunctionLatex: "",
       lastInsertedLatexFunction: "",
-      lastA11ySpokenFormulaText: "",
-      lastA11yCompleteSpokenFormulaText: "",
+      lastA11ySpokenFormulaText: null,
+      lastA11yCompleteSpokenFormulaText: null,
       multiple: [
         {
           keyCode: 81,
@@ -187,6 +188,7 @@ export default {
           {}
         )["-1"];
         console.log(`cancellato ${deletedText}`);
+        this.lastInsertedLatexFunction = latexAfterDeletion;
         this.$announcer.assertive(`cancellato ${deletedText}`);
       }
 
@@ -205,7 +207,7 @@ export default {
     });
     mathField.addEventListener("focus", (evt) => {
       console.log("focused");
-      this.$announcer.assertive(evt.target.getValue("spoken-text"));
+      this.readMathExpression(evt);
     });
     // debugger;
     // this.$refs.mathfield.addEventListener("input", (ev) =>
@@ -246,20 +248,25 @@ export default {
       this.shouldRead = true;
     },
     readMathExpression(event) {
+      // debugger;
       const formula = this.$refs.mathfield.getValue("spoken-text");
       const repeatPrefix = "Ripeto: ";
-      var toRead = this.lastA11ySpokenFormulaText;
+      var toRead = formula;
+      if (_.isEmpty(toRead)) {
+        toRead = "Nessuna formula presente";
+      }
       if (formula === this.lastA11ySpokenFormulaText) {
         toRead = `${
           this.lastA11yCompleteSpokenFormulaText.startsWith(repeatPrefix)
             ? ""
             : repeatPrefix
-        }${formula}`;
+        }${toRead}`;
       }
       this.lastA11yCompleteSpokenFormulaText = toRead;
       this.lastA11ySpokenFormulaText = formula;
       this.$announcer.assertive(`${toRead}`);
       // this.$announcer.polite("");
+      console.log(`mathexpr: ${toRead}`);
     },
     handleResize({ width, height }) {
       // setTimeout(() => {
