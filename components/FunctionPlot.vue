@@ -207,7 +207,11 @@ export default {
     });
     mathField.addEventListener("focus", (evt) => {
       console.log("focused");
-      this.readMathExpression(evt);
+      const formulaToRead = this.readMathExpression(evt, true);
+      this.$announcer.assertive(
+        `Formula attuale: ${formulaToRead}. Campo di input della formula matematica. Scrivi una formula`
+      );
+      // this.$announcer.polite("Puoi continuare a scrivere");
     });
     // debugger;
     // this.$refs.mathfield.addEventListener("input", (ev) =>
@@ -247,7 +251,7 @@ export default {
       this.textToRead = `premuto ${event.event.key}`;
       this.shouldRead = true;
     },
-    readMathExpression(event) {
+    readMathExpression(event, notRead = false) {
       // debugger;
       const formula = this.$refs.mathfield.getValue("spoken-text");
       const repeatPrefix = "Ripeto: ";
@@ -255,6 +259,11 @@ export default {
       if (_.isEmpty(toRead)) {
         toRead = "Nessuna formula presente";
       }
+
+      if (notRead) {
+        return toRead;
+      }
+
       if (formula === this.lastA11ySpokenFormulaText) {
         toRead = `${
           this.lastA11yCompleteSpokenFormulaText.startsWith(repeatPrefix)
