@@ -56,4 +56,7 @@ body,
   height: 100%;
   overflow: hidden;
 }
+body {
+  --keyboard-zindex: 3000;
+}
 </style>
